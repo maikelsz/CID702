@@ -2,11 +2,13 @@
 
 > A browser-based emulator of the first alphanumeric video terminal mass‑produced in Cuba (1978), internationally designated as the **SM‑7203 / CM 7203** within the COMECON computing system.
 
+<p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_emu.jpg" /></p>
+
 [![Single File](https://img.shields.io/badge/single--file-HTML%2FCSS%2FJS-brightgreen.svg)](index.html)
 [![No Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen.svg)]()
 [![Language](https://img.shields.io/badge/lang-ES%20%7C%20EN-blue.svg)](#)
 
-![CID 702 emulator running in the browser]([screenshots/hero.png](https://github.com/maikelsz/CID702/blob/main/CID702.png))
+<p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_2.jpg" /></p>
 
 ---
 
