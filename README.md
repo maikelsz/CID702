@@ -2,13 +2,11 @@
 
 > A browser-based emulator of the first alphanumeric video terminal mass‑produced in Cuba (1978), internationally designated as the **SM‑7203 / CM 7203** within the COMECON computing system.
 
-<p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_emu.jpg" /></p>
+<p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_emu.png" /></p>
 
 [![Single File](https://img.shields.io/badge/single--file-HTML%2FCSS%2FJS-brightgreen.svg)](index.html)
 [![No Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen.svg)]()
 [![Language](https://img.shields.io/badge/lang-ES%20%7C%20EN-blue.svg)](#)
-
-<p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_2.jpg" /></p>
 
 ---
 
@@ -33,6 +31,8 @@
 ## About
 
 The **CID 702** was designed at the **Instituto Central de Investigación Digital (ICID)** in Havana and mass‑produced starting in 1978. Within the COMECON computing family it was catalogued as the **SM‑7203** (and later as the **CM 7203**), becoming the first Cuban technological product exported internationally.
+
+<p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_2.jpg" /></p>
 
 This project recreates that terminal in the browser — faithfully reproducing its 72×20 character display, KOI‑7Н Cyrillic keyboard layout, and the three original communication interfaces — so that its behaviour can be studied, preserved, and enjoyed without access to the original hardware.
 
