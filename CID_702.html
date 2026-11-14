@@ -1,0 +1,2033 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CID 702 · CM 7203 · Videoterminal</title>
+    <style>
+
+
+
+        :root {
+            --crt-bg: #001402;
+            --crt-fg: #33ff66;
+            --crt-glow: rgba(51,255,102,0.55);
+            --case-panel: #11141a;
+            --case-body: #1e2230;
+            --case-border: #06080c;
+            --key-fn-face: #e2e8f0;
+            --key-fn-side: #718096;
+            --key-fn-text: #1a202c;
+            --key-al-face: #2d333b;
+            --key-al-side: #111;
+            --key-al-text: #ddd;
+            --key-cyr-text: #fbbf24;
+            --led-off: #1c1c1c;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 50% -10%, #1e2838 0%, #050810 65%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #ccc;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 22px;
+            padding: 22px;
+            overflow-x: auto;
+        }
+
+        .terminal-unit {
+            background: linear-gradient(180deg, var(--case-body) 0%, var(--case-panel) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 980px;
+            flex-shrink: 0;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 0 3px var(--case-border), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .monitor {
+            background: #000;
+            border-radius: 10px;
+            padding: 18px 24px 12px;
+            position: relative;
+            border: 1px solid #222;
+            box-shadow: inset 0 2px 3px rgba(255,255,255,0.05), inset 0 -3px 6px rgba(0,0,0,0.65);
+        }
+
+        .crt {
+            background: #050505;
+            border-radius: 24px / 16px;
+            padding: 18px;
+            box-shadow: inset 0 0 0 2px #000, inset 0 0 40px rgba(0,0,0,0.95);
+        }
+
+        .screen {
+            position: relative;
+            width: 780px;
+            height: 380px;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at 50% 45%, #001a02 0%, #000800 70%, #000 100%);
+            border-radius: 16px / 12px;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0, 50,0,0.9), 0 0 30px rgba(51,255,102,0.1);
+        }
+
+            .screen::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 10;
+                background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+            }
+
+            .screen::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 11;
+                background: radial-gradient(ellipse at 30% 15%, rgba(255,255,255,0.04), transparent 55%);
+            }
+
+        .screen-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            width: 100%;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 15px;
+            line-height: 1.15;
+            font-weight: 700;
+            color: var(--crt-fg);
+            text-shadow: 0 0 2px var(--crt-glow), 0 0 6px var(--crt-glow);
+            padding: 14px 18px;
+            white-space: pre;
+            overflow: hidden;
+        }
+
+        .line {
+            display: block;
+            height: 1.15em;
+            white-space: pre;
+        }
+
+        .cell {
+            display: inline-block;
+            width: 1ch;
+            height: 1.15em;
+            vertical-align: top;
+            text-align: center;
+            white-space: pre;
+        }
+
+            .cell.reverse {
+                background: var(--crt-fg);
+                color: var(--crt-bg);
+                text-shadow: none;
+            }
+
+            .cell.cursor {
+                background: var(--crt-fg);
+                color: var(--crt-bg);
+                text-shadow: none;
+                animation: cur-blink 1s steps(2, start) infinite;
+            }
+
+        @keyframes cur-blink {
+            0%, 50% {
+                background: var(--crt-fg);
+                color: var(--crt-bg);
+            }
+
+            50.01%, 100% {
+                background: transparent;
+                color: var(--crt-fg);
+                text-shadow: 0 0 4px var(--crt-glow);
+            }
+        }
+
+        .screen.off .screen-content {
+            opacity: 0;
+        }
+
+        .keyboard-area {
+            background: #0f1218;
+            border-radius: 6px;
+            border: 1px solid #2a303c;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            width: 900px;
+            margin: 0 auto;
+        }
+
+        .controls-panel {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(180deg, #141822 0%, #0b0e14 100%);
+            border-bottom: 1px solid #2a303c;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .controls-inner {
+            position: relative;
+            width: 900px;
+            height: 100%;
+        }
+
+        .ctrl-group-abs {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ctrl-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ctrl-lbl {
+            font-size: 9px;
+            font-weight: 700;
+            color: #9aa0a6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+            .ctrl-lbl.dot {
+                margin-bottom: 4px;
+                margin-top: 4px;
+                font-size: 8px;
+            }
+
+            .ctrl-lbl.top {
+                margin-bottom: 4px;
+            }
+
+            .ctrl-lbl.bot {
+                margin-top: 4px;
+            }
+
+            .ctrl-lbl.hori {
+                position: absolute;
+                right: 100%;
+                margin-right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            .ctrl-lbl.vert {
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+                position: absolute;
+                right: 100%;
+                margin-right: 8px;
+                top: 50%;
+                transform: translateY(-50%) rotate(180deg);
+            }
+
+        .sw {
+            width: 44px;
+            height: 57px;
+            background: #111;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            border: 2px solid #333;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.9);
+            flex-shrink: 0;
+        }
+
+            .sw .knob {
+                position: absolute;
+                left: 2px;
+                right: 2px;
+                height: 18px;
+                background: linear-gradient(180deg, #48bb78, #2f855a);
+                border-radius: 2px;
+                transition: top 0.04s;
+                box-shadow: 0 2px 3px rgba(0,0,0,0.6);
+                top: 33px;
+            }
+
+            .sw.on .knob {
+                top: 2px;
+            }
+
+            .sw.red .knob {
+                background: linear-gradient(180deg, #e53e3e, #9b2c2c);
+            }
+
+            .sw.green .knob {
+                background: linear-gradient(180deg, #48bb78, #276749);
+            }
+
+        .led {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--led-off);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9), 0 0 0 1px #000;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
+
+            .led.on {
+                background: radial-gradient(circle at 40% 35%, #ff7a7a, #c53030);
+                box-shadow: 0 0 15px #ff2828, inset 0 0 5px #fff;
+            }
+
+        .power-border {
+            border: 2px solid #444;
+            border-radius: 6px;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.05);
+            width: 44px;
+            height: 57px;
+        }
+
+        .btn-power {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, #e2e8f0, #718096);
+            border: 2px solid #1a202c;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+            .btn-power:active {
+                transform: scale(0.95);
+            }
+
+            .btn-power.on {
+                background: radial-gradient(circle at 40% 35%, #ff7a7a, #c53030);
+                box-shadow: 0 0 15px #ff2828, inset 0 0 5px #fff;
+            }
+
+        .kb-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 16px 0 10px 0;
+            border-bottom: 2px solid #444;
+            padding-bottom: 8px;
+            width: 100%;
+            padding-left: 16px;
+            padding-right: 92px;
+        }
+
+        .kb-logo {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .kb-logo img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                filter: drop-shadow(0px 0px 2px rgba(255,255,255,0.5));
+            }
+
+        .kb-title {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .keyboard-body {
+            position: relative;
+            width: 716px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 96px;
+            padding-bottom: 16px;
+        }
+
+        .krow {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-bottom: 4px;
+            z-index: 1;
+        }
+
+        .top-keys-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 716px;
+            height: 88px;
+        }
+
+        .top-row {
+            position: absolute;
+            width: 100%;
+            height: 44px;
+        }
+
+            .top-row.row-0 {
+                top: 0;
+            }
+
+            .top-row.row-1 {
+                top: 48px;
+            }
+
+        .key {
+            height: 44px;
+            width: 44px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            position: relative;
+            transition: transform 0.04s, filter 0.04s;
+        }
+
+            .key.fn {
+                background: linear-gradient(180deg, var(--key-fn-face) 0%, #a0aec0 100%);
+                border: 1px solid var(--key-fn-side);
+                border-top-color: #fff;
+                border-bottom-color: #4a5568;
+                color: var(--key-fn-text);
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 3px 3px rgba(0,0,0,0.5);
+            }
+
+            .key.al {
+                background: linear-gradient(180deg, var(--key-al-face) 0%, #1c2128 100%);
+                border: 1px solid var(--key-al-side);
+                border-top-color: #4a5568;
+                border-bottom-color: #000;
+                color: var(--key-al-text);
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 3px 3px rgba(0,0,0,0.6);
+            }
+
+            .key.pressed {
+                transform: translateY(3px) !important;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.6) !important;
+            }
+
+            .key.active-mod {
+                background: #a0d8a0 !important;
+                border-color: #609060 !important;
+                color: #000 !important;
+                transform: translateY(2px) !important;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.5) !important;
+            }
+
+            .key .lbl-fn {
+                font-size: 10px;
+                text-align: center;
+                white-space: pre-line;
+                line-height: 1.1;
+                font-weight: 800;
+            }
+
+            .key .lbl-al {
+                font-size: 15px;
+                line-height: 1;
+            }
+
+            .key .lbl-lat {
+                font-size: 13px;
+                font-weight: 700;
+                color: #ddd;
+                line-height: 1.1;
+                margin-top: 2px;
+            }
+
+            .key .lbl-cyr {
+                font-size: 9px;
+                font-weight: 700;
+                color: var(--key-cyr-text);
+                line-height: 1.1;
+                margin-bottom: 2px;
+            }
+
+            .key.w-25 {
+                width: 93px;
+            }
+
+            .key.w-space {
+                width: 380px;
+            }
+
+        .host-panel {
+            width: 300px;
+            background: linear-gradient(180deg, #1a2030 0%, #0b1018 100%);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid #232a38;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+            flex-shrink: 0;
+        }
+
+            .host-panel.is-hidden {
+                display: none;
+            }
+
+        .host-title {
+            background: #050505;
+            color: #fff;
+            padding: 8px;
+            text-align: center;
+            font-family: 'Arial Black', sans-serif;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            border-radius: 4px;
+            border: 1px solid #222;
+        }
+
+        .host-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f1722;
+            border: 1px solid #2a3548;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+        }
+
+        .btn-connect {
+            background: #1a2233;
+            border: 1px solid #4a6070;
+            color: #aaccee;
+            border-radius: 3px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+            .btn-connect.connected {
+                background: #2a6030;
+                border-color: #4a9050;
+                color: #aaffaa;
+            }
+
+        .host-log {
+            background: #040810;
+            border: 2px solid #0a0a0a;
+            border-radius: 4px;
+            height: 300px;
+            overflow-y: auto;
+            padding: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #8effa8;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.7);
+            white-space: pre-wrap;
+            word-break: break-word;
+            user-select: text;
+        }
+
+            .host-log .lbl {
+                color: #566;
+                font-style: italic;
+            }
+
+            .host-log .rx {
+                color: #88ccff;
+            }
+
+            .host-log .tx {
+                color: #8effa8;
+            }
+
+            .host-log .err {
+                color: #ff7a7a;
+            }
+
+        .host-input-row {
+            display: flex;
+            gap: 6px;
+        }
+
+            .host-input-row input {
+                flex: 1;
+                background: #040810;
+                border: 2px solid #232a38;
+                border-radius: 4px;
+                padding: 6px 8px;
+                color: #8effa8;
+                font-family: 'Courier New', monospace;
+                font-size: 12px;
+                outline: none;
+            }
+
+            .host-input-row button {
+                background: linear-gradient(180deg, #2a4050, #1a2a38);
+                border: 1px solid #4a6070;
+                color: #aaccee;
+                border-radius: 4px;
+                padding: 6px 12px;
+                cursor: pointer;
+                font-weight: 700;
+                font-size: 11px;
+            }
+
+        .host-quick {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            .host-quick button {
+                background: #1a2233;
+                border: 1px solid #2a3548;
+                color: #9ab;
+                border-radius: 3px;
+                padding: 4px 8px;
+                font-size: 10px;
+                cursor: pointer;
+                font-family: 'Courier New', monospace;
+            }
+
+                .host-quick button:hover {
+                    background: #2a3548;
+                    color: #ccd;
+                }
+
+        .host-interface-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f1722;
+            border: 1px solid #2a3548;
+            border-radius: 4px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #aaccee;
+        }
+
+            .host-interface-row select {
+                background: #1a2233;
+                border: 1px solid #4a6070;
+                color: #8effa8;
+                font-family: 'Courier New', monospace;
+                font-size: 10px;
+                padding: 2px 4px;
+                border-radius: 3px;
+                outline: none;
+                cursor: pointer;
+            }
+
+        .status-bar {
+            background: #101828;
+            border-radius: 4px;
+            padding: 6px 12px;
+            color: #88ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+            min-height: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.5);
+            margin-top: 4px;
+        }
+
+            .status-bar .lbl {
+                color: #88aaff;
+            }
+
+        .sb-field {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sb-periph {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .sb-icon-btn {
+            width: 28px;
+            height: 24px;
+            background: linear-gradient(to bottom, #2a3547, #1a2334);
+            border: 1px solid #0a0f18;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #88aaff;
+            transition: all .15s;
+            padding: 0;
+        }
+
+            .sb-icon-btn:hover {
+                background: linear-gradient(to bottom, #3a4560, #202b3f);
+                color: #aac8ff;
+            }
+
+            .sb-icon-btn.active {
+                background: linear-gradient(to bottom, #4a6080, #2a3a55);
+                border-color: #6a90c0;
+                box-shadow: 0 0 8px rgba(120,170,255,.5);
+                color: #fff;
+            }
+
+            .sb-icon-btn svg {
+                width: 16px;
+                height: 14px;
+                display: block;
+            }
+
+        .help-panel {
+            width: 0;
+            overflow: hidden;
+            background: #1b2435;
+            border-radius: 12px;
+            box-shadow: 0 25px 70px rgba(0,0,0,.75), inset 0 0 0 1px rgba(255,255,255,.06), 0 0 0 3px #0a0f18;
+            border: 1px solid #060810;
+            transition: width .4s ease, padding .4s ease, opacity .3s ease;
+            opacity: 0;
+            padding: 0;
+            flex-shrink: 0;
+            display: none;
+        }
+
+            .help-panel.open {
+                width: 500px;
+                padding: 12px;
+                opacity: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+        .help-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .help-title {
+            background: #050505;
+            color: #fff;
+            padding: 6px 10px;
+            font-size: 15px;
+            font-weight: 900;
+            font-family: 'Arial Black', sans-serif;
+            letter-spacing: 1px;
+            border-radius: 3px;
+            border: 1px solid #222;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .help-content {
+            background: #f5f2e8;
+            color: #222;
+            border: 3px solid #0a0a0a;
+            border-radius: 4px;
+            padding: 12px 14px;
+            height: 620px;
+            overflow-y: auto;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+            .help-content h3 {
+                margin: 14px 0 6px;
+                font-size: 13px;
+                color: #0a2a4a;
+                border-bottom: 1px solid #c8c0a8;
+                padding-bottom: 2px;
+            }
+
+            .help-content h4 {
+                margin: 10px 0 4px;
+                font-size: 12px;
+                color: #1a3a5a;
+            }
+
+            .help-content p {
+                margin: 4px 0 8px;
+            }
+
+            .help-content ul, .help-content ol {
+                margin: 4px 0 8px;
+                padding-left: 20px;
+            }
+
+            .help-content li {
+                margin: 2px 0;
+            }
+
+            .help-content code {
+                background: #e0dcc8;
+                padding: 1px 4px;
+                border-radius: 2px;
+                font-family: 'Courier New', monospace;
+                font-size: 11px;
+                color: #4a2a00;
+            }
+
+            .help-content b {
+                color: #1a3a5a;
+            }
+
+        @media (max-width: 1500px) {
+            body {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .help-panel.open {
+                width: 100%;
+                max-width: 980px;
+                order: 3;
+            }
+
+            .help-content {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-unit">
+        <div class="monitor">
+            <div class="crt">
+                <div class="screen off" id="screen">
+                    <div class="screen-content" id="screen-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="keyboard-area">
+            <div class="controls-panel">
+                <div class="controls-inner">
+
+                    <div class="ctrl-group-abs" style="left: 60px;">
+                        <div class="ctrl-lbl hori">ENLACE</div>
+                        <div class="ctrl-lbl top">&nbsp;</div>
+                        <div class="led" id="led-link"></div>
+                        <div class="ctrl-lbl top">&nbsp;</div>
+                    </div>
+
+                    <div class="ctrl-group-abs" style="left: 134px;">
+                        <div style="display: flex; gap: 4px; margin: 2px 0;">
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div class="ctrl-lbl top" style="font-size: 10px;">INF?</div>
+                                <div class="sw red" id="sw-sol-red"><div class="knob"></div></div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div class="ctrl-lbl top" style="font-size: 10px;">SUP</div>
+                                <div class="sw green" id="sw-sol-green"><div class="knob"></div></div>
+                            </div>
+                        </div>
+                        <div class="ctrl-lbl bot">SOLICITUD</div>
+                    </div>
+
+                    <div class="ctrl-group-abs" style="left: 285px; width: 140px;">
+                        <div class="ctrl-lbl" style="line-height: 1.2;font-size: 10px;">OPERACIONES<br>DE CONTROL</div>
+                    </div>
+
+                    <div class="ctrl-group-abs" style="left: 450px;">
+                        <div class="ctrl-col">
+                            <div class="ctrl-lbl top">LOCAL</div>
+                            <div class="sw on" id="sw-mode"><div class="knob"></div></div>
+                            <div class="ctrl-lbl bot">LINEA</div>
+                        </div>
+                        <div class="ctrl-lbl hori">MODO</div>
+                    </div>
+
+                    <div class="ctrl-group-abs" style="left: 546px;">
+                        <div class="ctrl-col">
+                            <div class="ctrl-lbl dot">⚪</div>
+                            <div class="sw on" id="sw-roll"><div class="knob"></div></div>
+                            <div class="ctrl-lbl dot">◯</div>
+                        </div>
+                        <div class="ctrl-lbl hori">ROLL</div>
+                    </div>
+
+                    <div class="ctrl-group-abs" style="left: 642px;">
+                        <div class="ctrl-col">
+                            <div class="ctrl-lbl dot">⚪</div>
+                            <div class="sw" id="sw-cent"><div class="knob"></div></div>
+                            <div class="ctrl-lbl dot">◯</div>
+                        </div>
+                        <div class="ctrl-lbl hori">CENT<br>CURS</div>
+                    </div>
+
+                    <div class="ctrl-group-abs" style="left: 738px;">
+                        <div class="ctrl-col">
+                            <div class="ctrl-lbl top">CONT</div>
+                            <div class="sw on" id="sw-step"><div class="knob"></div></div>
+                            <div class="ctrl-lbl bot">PASO</div>
+                        </div>
+                        <div class="ctrl-lbl hori">MOV<br>CURS</div>
+                    </div>
+
+                    <div class="ctrl-lbl top" style="position: absolute; right: 10px; top: 0px; font-family: 'Arial Black', sans-serif; font-size: 24px; color: #fff; text-align: right;">CM 7203</div>
+
+                    <div class="ctrl-group-abs" style="left: 834px;">
+                        <div class="power-border">
+                            <div class="btn-power" id="btn-power" title="Encendido"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="kb-header">
+                <div class="kb-logo">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAIAAACR5s1WAAAABnRSTlMACwAQABVojXEbAAAACXBIWXMAAArrAAAK6wGCiw1aAAAAfUlEQVRYhe3YoQ6AIBRAUXFGi8X//z6LxY7BXUdSCG974Z5EINy9MXCWWusUYN32d32dx/fmOaJglBEwAkbACKSIWHo2tXdwhBSTMAJdZ6L1+y4/ho5RikkYASNgBIyAEUgRMfyARXzgpJiEEShB/yeGpJiEETACRsAIGIEbPcIMvbhgDBoAAAAASUVORK5CYII=" alt="ICID Logo">
+                </div>
+                <div class="kb-title">videoterminal alfanumérica CID 702</div>
+                <div style="flex:1; height:2px; background:#fff; margin-left:10px;"></div>
+            </div>
+
+            <div class="keyboard-body" id="keyboard-body"></div>
+        </div>
+
+        <div class="status-bar">
+            <span class="sb-field"><span class="lbl">ESTADO:</span><span id="st-status" style="color:#ff7a7a;">APAGADO</span></span>
+            <span class="sb-field"><span class="lbl">ENLACE:</span><span id="st-link" style="color:#ff7a7a;">DESCONECTADO</span></span>
+            <span class="sb-field"><span class="lbl">MODO:</span><span id="st-mode">LOCAL</span></span>
+            <span class="sb-field"><span class="lbl">INTERFAZ:</span><span id="st-iface">IRPR</span></span>
+            <span class="sb-field"><span class="lbl">CURSOR:</span><span id="st-cursor">00,00</span></span>
+            <span class="sb-periph">
+                <button class="sb-icon-btn active" id="btn-toggle-host" title="Mostrar/Ocultar Computadora Host">
+                    <svg viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <rect x="2" y="2" width="20" height="12" rx="1" />
+                        <path d="M8 18 L12 14 L16 18" />
+                        <line x1="8" y1="18" x2="16" y2="18" />
+                    </svg>
+                </button>
+                <button class="sb-icon-btn" id="btn-toggle-help" title="Mostrar/Ocultar Ayuda">
+                    <svg viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <path d="M3 3 Q8 2 12 5 Q16 2 21 3 L21 17 Q16 16 12 19 Q8 16 3 17 Z" />
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                    </svg>
+                </button>
+            </span>
+        </div>
+    </div>
+
+    <div class="host-panel" id="host-panel">
+        <div class="host-title">COMPUTADORA HOST</div>
+        <div class="host-status-bar">
+            <span>ESTADO: <span id="host-state-txt" style="color:#ff7a7a;">DESCONECTADO</span></span>
+            <button class="btn-connect" id="btn-connect">CONECTAR</button>
+        </div>
+        <div class="host-interface-row">
+            <span>INTERFAZ:</span>
+            <select id="host-interface-select">
+                <option value="IRPR">IRPR (Paralelo)</option>
+                <option value="S2">S2 (Serie V.24)</option>
+                <option value="IRPS">IRPS (Lazo Corriente)</option>
+            </select>
+        </div>
+        <div class="host-log" id="host-log">
+            <span class="lbl">— Host inactivo —</span>
+        </div>
+        <div class="host-input-row">
+            <input type="text" id="host-input" placeholder="Enviar texto a la terminal..." disabled>
+            <button id="host-send" disabled>ENVIAR</button>
+        </div>
+        <div class="host-quick">
+            <button data-cmd="clear">CLEAR</button>
+            <button data-cmd="home">HOME</button>
+            <button data-cmd="eol">EOL</button>
+            <button data-cmd="lf">LF</button>
+            <button data-cmd="crlf">CR+LF</button>
+            <button data-cmd="tab">TAB</button>
+            <button data-cmd="bell">BELL</button>
+            <button data-cmd="demo">DEMO</button>
+        </div>
+    </div>
+
+    <div class="help-panel" id="help-panel">
+        <div class="help-inner">
+            <div class="help-title"><span class="ico">📖</span> AYUDA</div>
+            <div class="help-content">
+                <h3>Bienvenido al Simulador de la CID 702 (CM 7203)</h3>
+                <p>Este es un emulador interactivo de la videoterminal cubana <b>CID 702</b> (1978), conocida internacionalmente como <b>CM 7203</b> dentro del sistema CAME. Reproduce fielmente las capacidades del hardware original: una pantalla de 72 caracteres por 20 líneas, un teclado con sub-etiquetas cirílicas (KOI-7Н), y comunicación con una computadora host a través de tres interfaces simuladas.</p>
+
+                <h3>Documentación Técnica</h3>
+                <ul>
+                    <li><b>Pantalla:</b> 20 líneas × 72 caracteres = 1440 posiciones.</li>
+                    <li><b>Memoria:</b> Buffer interno de 1440 caracteres.</li>
+                    <li><b>Codificación:</b> ASCII / KOI-7Н (cirílico).</li>
+                    <li><b>Interfaces:</b> Paralela (IRPR), Serie (S2) y Lazo de Corriente (IRPS).</li>
+                    <li><b>Modos:</b> LOCAL (autónomo) y LÍNEA (conectado a computadora, semidúplex).</li>
+                    <li><b>Atributos por celda:</b> carácter, color, inversión y parpadeo (slot reservado).</li>
+                </ul>
+
+                <h3>Guía de Inicio Rápido</h3>
+                <ol>
+                    <li>Enciende la terminal con el botón circular (rojo al encenderse) en el extremo derecho del panel superior.</li>
+                    <li>Al encender se imprime el <b>banner de bienvenida</b> con los datos técnicos y la recomendación de usar la ayuda.</li>
+                    <li>La terminal intentará conectarse automáticamente al host. El LED de <b>ENLACE</b> se iluminará en rojo.</li>
+                    <li>Selecciona la <b>interfaz de comunicación</b> en el panel lateral derecho (IRPR, S2 o IRPS).</li>
+                    <li>Escribe con el teclado virtual (clic) o con tu teclado físico real.</li>
+                    <li>Usa los botones <b>Monitor</b> y <b>Libro</b> en la barra de estado inferior para mostrar u ocultar el host y este manual.</li>
+                </ol>
+
+                <h3>El Panel de Control Superior</h3>
+                <ul>
+                    <li><b>ENLACE (LED):</b> Indica conexión establecida con el host. Solo se ilumina si la terminal está encendida y el enlace está activo.</li>
+                    <li><b>SOLICITUD (INF? / SUP):</b> Representan los dos sentidos del protocolo handshake (ver sección específica).</li>
+                    <li><b>MODO:</b> Palanca <b>arriba</b> = <b>LOCAL</b> (autónomo); palanca <b>abajo</b> = <b>LÍNEA</b> (transmisión al host).</li>
+                    <li><b>ROLL:</b> Palanca arriba = scroll automático al llegar a la última fila; abajo = la pantalla se sobrescribe sin desplazar.</li>
+                    <li><b>CENT CURS:</b> Centra el cursor. Función heredada; mantiene el estado visual.</li>
+                    <li><b>MOV CURS (CONT / PASO):</b> CONT = las flechas del teclado físico repiten al mantenerlas pulsadas; PASO = solo responden al primer press.</li>
+                    <li><b>CM 7203:</b> Rótulo del modelo.</li>
+                    <li><b>POWER:</b> Botón circular de encendido. Se ilumina en rojo al estar encendido.</li>
+                </ul>
+
+                <h3>El Teclado</h3>
+
+                <h4>Teclas Alfanuméricas (Oscuras)</h4>
+                <p>Cada tecla muestra la letra latina principal en blanco y la cirílica correspondiente en ámbar. La correspondencia es <b>fonética</b>: A→А, B→Б, C→Ц, F→Ф, J→Й, etc.</p>
+
+                <h4>Teclas de Función (Claras)</h4>
+                <ul>
+                    <li><b>KOI?:</b> Alterna entre teclado latino y cirílico. Al activarse, las teclas alfanuméricas emiten la letra cirílica correspondiente.</li>
+                    <li><b>INS REM / SUP REM:</b> Funciones de edición de inserción y supresión de líneas (reservado).</li>
+                    <li><b>BREAK?:</b> Interrumpe la operación actual enviando ETX (ASCII 0x03). Fuerza un flush inmediato del buffer de transmisión.</li>
+                    <li><b>INIC CAR / SUP CAR:</b> Inicio / supresión de carácter (reservado).</li>
+                    <li><b>RESET:</b> Limpia toda la pantalla.</li>
+                    <li><b>FEED / BACK FEED:</b> Avanza / retrocede una línea (reservado para teletipo).</li>
+                    <li><b>START / STOP:</b> Marca inicio y fin de operación (registra en el log del host).</li>
+                    <li><b>STEP CLEAR:</b> Borra la línea actual.</li>
+                    <li><b>NEW LINE:</b> Envía CR + LF al host (en modo LÍNEA) y salta de línea en pantalla.</li>
+                    <li><b>BACK?:</b> Retroceso: borra el carácter anterior. En modo LÍNEA también envía 0x08 al host.</li>
+                    <li><b>DEL:</b> Borra el carácter bajo el cursor desplazando el resto. En modo LÍNEA envía 0x7F.</li>
+                    <li><b>ESC:</b> Envía el carácter de escape (0x1B).</li>
+                    <li><b>???</b> (tecla en blanco): reservada, no emite nada.</li>
+                </ul>
+
+                <h4>Modificadores</h4>
+                <ul>
+                    <li><b>SHIFT LOCK:</b> Toggle persistente (se queda hundida). Activa mayúsculas permanentes.</li>
+                    <li><b>SHIFT (izquierdo y derecho):</b> Toggle visual que se consume tras usarse (one-shot). Con el teclado físico, <code>Shift</code> funciona momentáneamente como en un teclado real.</li>
+                    <li>
+                        <b>CTRL:</b>
+                        <ul>
+                            <li><b>Clic del mouse</b> = toggle persistente (se queda hundido).</li>
+                            <li><b>Tecla Control física</b> = modificador momentáneo, se consume al usarse (igual que Shift). Combinado con letras genera caracteres de control (Ctrl+C → ETX, Ctrl+A → SOH, etc.).</li>
+                            <li>Si hay <b>texto seleccionado</b> (en el log o en la ayuda) y pulsas Ctrl+C, se respeta el atajo del navegador en lugar de enviar control a la terminal.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Panel Host</h3>
+                <ul>
+                    <li><b>CONECTAR / DESCONECTAR:</b> Establece el enlace con la terminal. Sin enlace no hay comunicación.</li>
+                    <li><b>INTERFAZ:</b> Selector de la interfaz simulada. Cambia la velocidad de transmisión (ver sección "Interfaces de Comunicación").</li>
+                    <li><b>Log:</b> Muestra todo el tráfico. <span style="color:#0050a0;">→ TX</span> son datos enviados <b>desde</b> el host hacia la terminal; <span style="color:#106010;">← RX</span> son datos recibidos <b>de</b> la terminal.</li>
+                    <li><b>Campo de texto + ENVIAR:</b> Envía el texto escrito más un CR+LF al terminal.</li>
+                    <li>
+                        <b>Botones rápidos:</b>
+                        <ul>
+                            <li><b>CLEAR:</b> limpia pantalla y log. Disponible incluso con terminal apagada.</li>
+                            <li><b>HOME / EOL:</b> Mueven el cursor al inicio / final de la línea.</li>
+                            <li><b>LF / CR+LF / TAB / BELL:</b> Envían el carácter de control al terminal.</li>
+                            <li><b>DEMO:</b> Envía un texto de prueba con saltos de línea.</li>
+                            <li>Excepto CLEAR, los botones requieren terminal encendida.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Interfaces de Comunicación</h3>
+                <p>La terminal emula tres interfaces históricas con velocidades simuladas distintas:</p>
+                <table style="width:100%; border-collapse:collapse; font-size:11px; margin:6px 0;">
+                    <tr>
+                        <th style="border:1px solid #c8c0a8; padding:3px 6px; background:#e0dcc8;">Interfaz</th>
+                        <th style="border:1px solid #c8c0a8; padding:3px 6px; background:#e0dcc8;">Uso Histórico</th>
+                        <th style="border:1px solid #c8c0a8; padding:3px 6px; background:#e0dcc8;">Velocidad Simulada</th>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;"><b>IRPR</b></td>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;">Paralela, conexión directa corta</td>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;">Instantánea (~100.000 car/s)</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;"><b>S2</b></td>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;">Serie V.24/RS-232, líneas de datos</td>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;">~9.600 baudios (10 ms/carácter)</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;"><b>IRPS</b></td>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;">Lazo de corriente, entornos industriales</td>
+                        <td style="border:1px solid #c8c0a8; padding:3px 6px;">~9.600 baudios (15 ms/carácter)</td>
+                    </tr>
+                </table>
+                <p>Al cambiar la interfaz mientras la terminal está conectada, el enlace se reinicia brevemente para aplicar la nueva velocidad. Verás en el log dos mensajes de conexión con la nueva interfaz.</p>
+
+                <h3>Handshake / SOLICITUD</h3>
+                <p>Los interruptores <b>SOLICITUD (SUP / INF?)</b> representan el protocolo de handshake entre terminal y computadora:</p>
+                <ul>
+                    <li><b>SUP (Request To Send):</b> Terminal lista para transmitir al host.</li>
+                    <li><b>INF? (Flow Control / XOFF):</b> Solicita pausa del flujo desde el host (buffer próximo a llenarse o terminal ocupada).</li>
+                </ul>
+                <p>En el hardware original la computadora respondía con <b>CTS</b> o <b>XON</b>. En esta simulación los interruptores mantienen estado visual; el handshake real está simplificado para no bloquear la interfaz.</p>
+
+                <h3>Modo LOCAL y Modo LÍNEA</h3>
+                <ul>
+                    <li><b>LOCAL (palanca arriba):</b> Terminal autónoma. Los caracteres se muestran en pantalla pero <b>no</b> se transmiten al host.</li>
+                    <li>
+                        <b>LÍNEA (palanca abajo):</b> Semidúplex. Cada carácter que tecleas se muestra y se acumula en el buffer de transmisión. El buffer se envía al host en tres casos:
+                        <ul>
+                            <li>Al pulsar <b>NEW LINE</b> (envía CR+LF y fuerza flush inmediato).</li>
+                            <li>Al pulsar <b>BREAK?</b> (envía ETX y fuerza flush inmediato).</li>
+                            <li>Por <b>debounce de 400 ms</b> de inactividad, agrupando caracteres sueltos para evitar spam en el log.</li>
+                        </ul>
+                    </li>
+                    <li>Al volver de LÍNEA a LOCAL, cualquier buffer pendiente se envía antes de cambiar.</li>
+                </ul>
+
+                <h3>Barra de Estado</h3>
+                <p>Muestra el estado actual del sistema en cinco campos:</p>
+                <ul>
+                    <li><b>ESTADO:</b> APAGADO / ENCENDIDO.</li>
+                    <li><b>ENLACE:</b> DESCONECTADO / CONECTADO.</li>
+                    <li><b>MODO:</b> LOCAL / LINE.</li>
+                    <li><b>INTERFAZ:</b> IRPR / S2 / IRPS.</li>
+                    <li><b>CURSOR:</b> Posición fila,columna (00,00 a 19,71).</li>
+                </ul>
+                <p>A la derecha, dos botones con icono:</p>
+                <ul>
+                    <li><b>Monitor:</b> Muestra u oculta el Panel Host (conexión, log, envío).</li>
+                    <li><b>Libro:</b> Muestra u oculta este Panel de Ayuda.</li>
+                </ul>
+
+                <h3>Atajos y Comportamientos Especiales</h3>
+                <ul>
+                    <li><b>Shift físico:</b> Modificador momentáneo, afecta al siguiente carácter. Ambas teclas SHIFT virtuales se hunden visualmente al pulsarlo.</li>
+                    <li><b>Control físico:</b> Modificador momentáneo (como Shift). Se consume al aplicarse a una letra. Combinado con una letra produce el carácter de control correspondiente.</li>
+                    <li><b>Ctrl + letra con texto seleccionado:</b> se respeta el atajo del navegador (copiar, buscar, etc.).</li>
+                    <li><b>Backspace / Delete:</b> Funcionan con el teclado físico y virtual.</li>
+                    <li><b>Flechas, Home, End:</b> Mueven el cursor. Las flechas respetan el modo CONT / PASO del switch MOV CURS.</li>
+                    <li><b>Sonidos:</b> El tecleo produce un click agudo; los interruptores emiten un clack grave diferenciado al accionarlos.</li>
+                    <li><b>Barra espaciadora:</b> Reacciona visualmente al pulsar Space en el teclado físico, igual que el resto de teclas.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        "use strict";
+
+        const COLS = 72;
+        const ROWS = 20;
+
+        let currentInterface = 'IRPR';
+
+        const T = {
+            power: false,
+            hostConnected: false,
+            mode: 'LOCAL',
+            roll: true,
+            cursorStep: true,
+            soundOn: true,
+            cursorRow: 0,
+            cursorCol: 0,
+            buffer: [],
+            fgColor: 'green',
+            shift: false,
+            ctrl: false,
+            capsLock: false,
+            koiMode: false,
+            txBuffer: '',
+        };
+
+        const COLORS = { green: '#33ff66' };
+
+        const LAT_TO_CYR = {
+            'A': 'А', 'B': 'Б', 'C': 'Ц', 'D': 'Д', 'E': 'Е', 'F': 'Ф', 'G': 'Г', 'H': 'Х', 'I': 'И', 'J': 'Й',
+            'K': 'К', 'L': 'Л', 'M': 'М', 'N': 'Н', 'O': 'О', 'P': 'П', 'Q': 'Я', 'R': 'Р', 'S': 'С', 'T': 'Т',
+            'U': 'У', 'V': 'Ж', 'W': 'Ш', 'X': 'Ь', 'Y': 'Ы', 'Z': 'З',
+            '[': 'Щ', '{': 'Х', '}': 'Ъ', ';': 'Ж', ':': 'Э', ',': 'Б', '.': 'Ю'
+        };
+
+        const KEY_W = 44;
+        const KEY_MAP = {};
+        const CELL_CACHE = new Array(ROWS * COLS);
+        const SB_REFS = {};
+        const SB_LAST = { status: null, link: null, mode: null, iface: null, cursor: null };
+
+        let txInterval = null;
+        let txFlushTimer = null;
+        let lastBeepTime = 0;
+        let prevCursorEl = null;
+        let reconnectingInterface = false;
+
+        const topRow0 = [
+            { label: 'KOI?', type: 'fn', code: 'koi', id: 'k-koi', center: 70 },
+            { label: 'INS\nREM', type: 'fn', code: 'ins_rem', center: 262 },
+            { label: 'SUP\nREM', type: 'fn', code: 'sup_rem', center: 310 },
+            { label: 'BREAK?', type: 'fn', code: 'break', center: 358 },
+            { label: 'INIC\nCAR', type: 'fn', code: 'inic_car', center: 406 },
+            { label: 'SUP\nCAR', type: 'fn', code: 'sup_car', center: 454 },
+        ];
+
+        const topRow1 = [
+            { label: 'RESET', type: 'fn', code: 'reset', center: 70 },
+            { label: 'FEED', type: 'fn', code: 'feed', center: 262 },
+            { label: 'BACK\nFEED', type: 'fn', code: 'backfeed', center: 310 },
+            { label: 'START', type: 'fn', code: 'start', center: 358 },
+            { label: 'STOP', type: 'fn', code: 'stop', center: 406 },
+            { label: 'STEP\nCLEAR', type: 'fn', code: 'stepclear', center: 454 },
+        ];
+
+        const mainRows = [
+            [
+                { label: '1', type: 'al', emit: '1' }, { label: '2', type: 'al', emit: '2' },
+                { label: '3', type: 'al', emit: '3' }, { label: '4', type: 'al', emit: '4' },
+                { label: '5', type: 'al', emit: '5' }, { label: '6', type: 'al', emit: '6' },
+                { label: '7', type: 'al', emit: '7' }, { label: '8', type: 'al', emit: '8' },
+                { label: '9', type: 'al', emit: '9' }, { label: '0', type: 'al', emit: '0' },
+                { label: '-?', type: 'al', emit: '-' }, { label: '=?', type: 'al', emit: '=' },
+                { label: '/?', type: 'al', emit: '/' }, { label: 'BACK?', type: 'fn', code: 'backspace' },
+            ],
+            [
+                { label: 'CTRL', type: 'fn', code: 'ctrl', id: 'k-ctrl' },
+                { label: 'Q', cyr: 'Я', type: 'al', emit: 'Q' }, { label: 'W', cyr: 'Ш', type: 'al', emit: 'W' },
+                { label: 'E', cyr: 'Е', type: 'al', emit: 'E' }, { label: 'R', cyr: 'Р', type: 'al', emit: 'R' },
+                { label: 'T', cyr: 'Т', type: 'al', emit: 'T' }, { label: 'Y', cyr: 'Ы', type: 'al', emit: 'Y' },
+                { label: 'U', cyr: 'У', type: 'al', emit: 'U' }, { label: 'I', cyr: 'И', type: 'al', emit: 'I' },
+                { label: 'O', cyr: 'О', type: 'al', emit: 'O' }, { label: 'P', cyr: 'П', type: 'al', emit: 'P' },
+                { label: '{?', cyr: 'Х', type: 'al', emit: '{' }, { label: '}?', cyr: 'Ъ', type: 'al', emit: '}' },
+                { label: '\\?', type: 'al', emit: '\\' }, { label: 'NEW\nLINE', type: 'fn', code: 'newline' },
+            ],
+            [
+                { label: 'SHIFT\nLOCK', type: 'fn', code: 'caps', id: 'k-caps' },
+                { label: 'A', cyr: 'А', type: 'al', emit: 'A' }, { label: 'S', cyr: 'С', type: 'al', emit: 'S' },
+                { label: 'D', cyr: 'Д', type: 'al', emit: 'D' }, { label: 'F', cyr: 'Ф', type: 'al', emit: 'F' },
+                { label: 'G', cyr: 'Г', type: 'al', emit: 'G' }, { label: 'H', cyr: 'Х', type: 'al', emit: 'H' },
+                { label: 'J', cyr: 'Й', type: 'al', emit: 'J' }, { label: 'K', cyr: 'К', type: 'al', emit: 'K' },
+                { label: 'L', cyr: 'Л', type: 'al', emit: 'L' }, { label: ';', cyr: 'Ж', type: 'al', emit: ';' },
+                { label: ':', cyr: 'Э', type: 'al', emit: ':' }, { label: '|?', type: 'al', emit: '|' },
+                { label: 'DEL', type: 'fn', code: 'del' },
+            ],
+            [
+                { label: 'SHIFT', type: 'fn', w: 2.5, code: 'shift', id: 'k-shift' },
+                { label: 'Z', cyr: 'З', type: 'al', emit: 'Z' }, { label: 'X', cyr: 'Ь', type: 'al', emit: 'X' },
+                { label: 'C', cyr: 'Ц', type: 'al', emit: 'C' }, { label: 'V', cyr: 'Ж', type: 'al', emit: 'V' },
+                { label: 'B', cyr: 'Б', type: 'al', emit: 'B' }, { label: 'N', cyr: 'Н', type: 'al', emit: 'N' },
+                { label: 'M', cyr: 'М', type: 'al', emit: 'M' }, { label: '<,', cyr: 'Б', type: 'al', emit: ',' },
+                { label: '>.', cyr: 'Ю', type: 'al', emit: '.' }, { label: '???', type: 'al', w: 1 },
+                { label: 'SHIFT', type: 'fn', w: 2.5, code: 'shift', id: 'k-shift2' },
+                { label: 'ESC', type: 'fn', code: 'esc' },
+            ],
+            [
+                { label: '', type: 'al', w: 'space', code: 'space' }
+            ]
+        ];
+
+        function initBuffer() {
+            T.buffer = Array.from({ length: ROWS }, () =>
+                Array.from({ length: COLS }, () => ({
+                    ch: ' ', color: 'green', reverse: false, blink: false
+                }))
+            );
+            T.cursorRow = 0;
+            T.cursorCol = 0;
+        }
+
+        function buildGrid() {
+            const scr = document.getElementById('screen-content');
+            scr.innerHTML = '';
+            for (let r = 0; r < ROWS; r++) {
+                const line = document.createElement('div');
+                line.className = 'line';
+                for (let c = 0; c < COLS; c++) {
+                    const cell = document.createElement('span');
+                    cell.className = 'cell';
+                    cell.dataset.r = r;
+                    cell.dataset.c = c;
+                    cell.textContent = '\u00A0';
+                    line.appendChild(cell);
+                    CELL_CACHE[r * COLS + c] = cell;
+                }
+                scr.appendChild(line);
+            }
+        }
+
+        function createKeyElement(k) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `key ${k.type}`;
+
+            if (k.label) {
+                if (k.cyr) {
+                    btn.innerHTML = `<span class="lbl-lat">${k.label}</span><span class="lbl-cyr">${k.cyr}</span>`;
+                } else if (k.type === 'fn') {
+                    btn.innerHTML = `<span class="lbl-fn">${k.label}</span>`;
+                } else {
+                    btn.innerHTML = `<span class="lbl-al">${k.label}</span>`;
+                }
+            }
+
+            if (k.id) btn.id = k.id;
+            if (k.code) btn.dataset.code = k.code;
+
+            if (k.emit) {
+                btn.dataset.emit = k.emit;
+                KEY_MAP[k.emit] = btn;
+                KEY_MAP[k.emit.toLowerCase()] = btn;
+            }
+
+            if (k.code === 'space') { KEY_MAP[' '] = btn; }
+
+            btn.addEventListener('mousedown', (e) => { e.preventDefault(); btn.classList.add('pressed'); });
+            btn.addEventListener('mouseup', () => btn.classList.remove('pressed'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('pressed'));
+
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (k.code) handleCodeKey(k.code);
+                else if (k.emit) handleCharKey(k.emit, e.shiftKey || T.shift);
+            });
+
+            return btn;
+        }
+
+        function buildKeyboard() {
+            const kbBody = document.getElementById('keyboard-body');
+            kbBody.innerHTML = '';
+
+            const topContainer = document.createElement('div');
+            topContainer.className = 'top-keys-container';
+
+            const createTopRow = (rowData, rowClass) => {
+                const rowEl = document.createElement('div');
+                rowEl.className = `top-row ${rowClass}`;
+                rowData.forEach(k => {
+                    const btn = createKeyElement(k);
+                    btn.style.position = 'absolute';
+                    btn.style.left = `${k.center - KEY_W / 2}px`;
+                    btn.style.width = `${KEY_W}px`;
+                    rowEl.appendChild(btn);
+                });
+                return rowEl;
+            };
+
+            topContainer.appendChild(createTopRow(topRow0, 'row-0'));
+            topContainer.appendChild(createTopRow(topRow1, 'row-1'));
+            kbBody.appendChild(topContainer);
+
+            mainRows.forEach((row) => {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'krow';
+                row.forEach(k => {
+                    const btn = createKeyElement(k);
+                    if (k.w === 2.5) btn.classList.add('w-25');
+                    else if (k.w === 'space') btn.classList.add('w-space');
+                    rowEl.appendChild(btn);
+                });
+                kbBody.appendChild(rowEl);
+            });
+        }
+
+        function handleCodeKey(code) {
+            if (!T.power) { beep(200, 0.06, 0.05); return; }
+            switch (code) {
+                case 'reset': clearScreen(); break;
+                case 'feed': writeChar('\r'); writeChar('\n'); break;
+                case 'backfeed': if (T.cursorRow > 0) { T.cursorRow--; updateCursor(); } break;
+                case 'start': logLine('lbl', '·', 'START'); break;
+                case 'stop': logLine('lbl', '·', 'STOP'); break;
+                case 'stepclear': clearLine(); break;
+                case 'newline': writeChar('\r'); writeChar('\n'); break;
+                case 'backspace': writeChar('\b'); break;
+                case 'del':
+                    deleteAtCursor();
+                    if (T.mode === 'LINE') { T.txBuffer += '\x7F'; scheduleTxFlush(400); }
+                    break;
+                case 'esc': writeChar('\x1b'); break;
+                case 'space': handleCharKey(' ', false); break;
+                case 'break':
+                    if (T.mode === 'LINE') {
+                        T.txBuffer += '\x03';
+                        flushTx();
+                    }
+                    logLine('lbl', '·', 'BREAK');
+                    break;
+                case 'shift': T.shift = !T.shift; updateModIndicators(); break;
+                case 'caps': T.capsLock = !T.capsLock; updateModIndicators(); break;
+                // CTRL con click del mouse = toggle (pegajoso). Con teclado real = momentáneo (en onPhysKeyDown).
+                case 'ctrl': T.ctrl = !T.ctrl; updateModIndicators(); break;
+                case 'koi': T.koiMode = !T.koiMode; updateModIndicators(); break;
+            }
+            if (T.soundOn) beep(900, 0.02, 0.03, 'triangle');
+        }
+
+        // isCtrlHeld: CTRL momentáneo del teclado físico (como SHIFT).
+        function handleCharKey(char, isShifted, isCtrlHeld = false) {
+            if (!T.power) { beep(200, 0.06, 0.05); return; }
+            let ch = char;
+            const upper = isShifted || T.capsLock;
+
+            if (/[A-Za-z]/.test(ch)) ch = upper ? ch.toUpperCase() : ch.toLowerCase();
+
+            // CTRL toggle (mouse) o momentáneo (teclado real).
+            if ((T.ctrl || isCtrlHeld) && /^[A-Za-z]$/.test(ch)) {
+                ch = String.fromCharCode(ch.toUpperCase().charCodeAt(0) - 64);
+                // Solo consume el toggle (mouse). El momentáneo se consume al soltar la tecla física.
+                if (T.ctrl) { T.ctrl = false; updateModIndicators(); }
+            }
+
+            if (T.koiMode) {
+                const lookup = ch.toUpperCase();
+                if (LAT_TO_CYR[lookup]) {
+                    ch = LAT_TO_CYR[lookup];
+                    if (!upper) ch = ch.toLowerCase();
+                }
+            }
+
+            if (T.soundOn) beep(1400, 0.02, 0.035, 'square');
+            writeChar(ch);
+
+            if (T.shift && !T.capsLock) {
+                T.shift = false;
+                updateModIndicators();
+            }
+        }
+
+        function updateModIndicators() {
+            const map = { 'k-shift': T.shift, 'k-shift2': T.shift, 'k-caps': T.capsLock, 'k-ctrl': T.ctrl, 'k-koi': T.koiMode };
+            for (const [id, state] of Object.entries(map)) {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('active-mod', state);
+            }
+        }
+
+        function onPhysKeyDown(e) {
+            if (!T.power || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+            let ch = e.key;
+            let virtualBtn = null;
+            let isShift = false;
+
+            if (ch.length === 1) virtualBtn = KEY_MAP[ch.toUpperCase()] || KEY_MAP[ch];
+            else if (ch === 'Enter') virtualBtn = document.querySelector('[data-code="newline"]');
+            else if (ch === 'Escape') virtualBtn = document.querySelector('[data-code="esc"]');
+            else if (ch === 'Shift') { virtualBtn = document.getElementById('k-shift'); isShift = true; }
+            else if (ch === 'CapsLock') virtualBtn = document.getElementById('k-caps');
+            else if (ch === 'Control') virtualBtn = document.getElementById('k-ctrl');
+            else if (ch === 'Delete') virtualBtn = document.querySelector('[data-code="del"]');
+            else if (ch === 'Backspace') virtualBtn = document.querySelector('[data-code="backspace"]');
+
+            if (virtualBtn) virtualBtn.classList.add('pressed');
+            if (isShift) {
+                const sh2 = document.getElementById('k-shift2');
+                if (sh2) sh2.classList.add('pressed');
+            }
+
+            if (ch === 'CapsLock') { T.capsLock = !T.capsLock; updateModIndicators(); e.preventDefault(); return; }
+            // CTRL teclado real = momentáneo (como SHIFT): NO toggle de T.ctrl.
+            if (ch === 'Control') { e.preventDefault(); return; }
+            if (ch === 'Enter') { writeChar('\r'); writeChar('\n'); e.preventDefault(); return; }
+            if (ch === 'Backspace') { writeChar('\b'); e.preventDefault(); return; }
+            if (ch === 'Escape') { writeChar('\x1b'); e.preventDefault(); return; }
+            if (ch === 'Delete') { handleCodeKey('del'); e.preventDefault(); return; }
+
+            const arrows = { 'ArrowLeft': [0, -1], 'ArrowRight': [0, 1], 'ArrowUp': [-1, 0], 'ArrowDown': [1, 0] };
+            if (arrows[ch]) {
+                if (T.cursorStep || !e.repeat) moveCursor(...arrows[ch]);
+                e.preventDefault();
+                return;
+            }
+
+            if (ch === 'Home') { T.cursorRow = 0; T.cursorCol = 0; updateCursor(); e.preventDefault(); return; }
+            if (ch === 'End') { T.cursorCol = COLS - 1; updateCursor(); e.preventDefault(); return; }
+
+            if (ch.length === 1 && !e.altKey && !e.metaKey) {
+                // Si hay texto seleccionado y CTRL está pulsado, respetar el atajo del navegador (Ctrl+C, etc.).
+                const hasSel = window.getSelection && window.getSelection().toString().length > 0;
+                if (e.ctrlKey && hasSel) return;
+
+                handleCharKey(ch, e.shiftKey || T.shift, e.ctrlKey);
+                e.preventDefault();
+            }
+        }
+
+        function onPhysKeyUp(e) {
+            let ch = e.key;
+            let virtualBtn = null;
+            let isShift = false;
+
+            if (ch.length === 1) virtualBtn = KEY_MAP[ch.toUpperCase()] || KEY_MAP[ch];
+            else if (ch === 'Enter') virtualBtn = document.querySelector('[data-code="newline"]');
+            else if (ch === 'Escape') virtualBtn = document.querySelector('[data-code="esc"]');
+            else if (ch === 'Shift') { virtualBtn = document.getElementById('k-shift'); isShift = true; }
+            else if (ch === 'CapsLock') virtualBtn = document.getElementById('k-caps');
+            else if (ch === 'Control') virtualBtn = document.getElementById('k-ctrl');
+            else if (ch === 'Delete') virtualBtn = document.querySelector('[data-code="del"]');
+            else if (ch === 'Backspace') virtualBtn = document.querySelector('[data-code="backspace"]');
+
+            if (virtualBtn) virtualBtn.classList.remove('pressed');
+            if (isShift) {
+                const sh2 = document.getElementById('k-shift2');
+                if (sh2) sh2.classList.remove('pressed');
+            }
+        }
+
+        function cellEl(r, c) { return CELL_CACHE[r * COLS + c]; }
+
+        function updateCell(r, c) {
+            const el = cellEl(r, c);
+            if (!el) return;
+            const b = T.buffer[r][c];
+            const ch = b.ch === ' ' ? '\u00A0' : b.ch;
+            if (el.textContent !== ch) el.textContent = ch;
+            el.classList.toggle('reverse', !!b.reverse);
+            el.style.color = b.reverse ? 'var(--crt-bg)' : (COLORS[b.color] || COLORS.green);
+        }
+
+        function updateCursor() {
+            if (prevCursorEl) {
+                prevCursorEl.classList.remove('cursor');
+                prevCursorEl = null;
+            }
+            if (T.power) {
+                const cur = cellEl(T.cursorRow, T.cursorCol);
+                if (cur) {
+                    cur.classList.add('cursor');
+                    prevCursorEl = cur;
+                }
+            }
+            updateStatusBar();
+        }
+
+        function renderAll() {
+            for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) updateCell(r, c);
+            updateCursor();
+        }
+
+        function clearScreen() {
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cell = T.buffer[r][c];
+                    cell.ch = ' ';
+                    cell.color = 'green';
+                    cell.reverse = false;
+                    cell.blink = false;
+                }
+            }
+            T.cursorRow = 0;
+            T.cursorCol = 0;
+            renderAll();
+        }
+
+        function clearLine() {
+            for (let c = 0; c < COLS; c++) {
+                const cell = T.buffer[T.cursorRow][c];
+                cell.ch = ' ';
+                cell.color = 'green';
+                cell.reverse = false;
+                cell.blink = false;
+            }
+            T.cursorCol = 0;
+            for (let c = 0; c < COLS; c++) updateCell(T.cursorRow, c);
+            updateCursor();
+        }
+
+        function scrollUp() {
+            const firstLine = T.buffer.shift();
+            for (let c = 0; c < COLS; c++) {
+                const cell = firstLine[c];
+                cell.ch = ' ';
+                cell.color = 'green';
+                cell.reverse = false;
+                cell.blink = false;
+            }
+            T.buffer.push(firstLine);
+            for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) updateCell(r, c);
+            if (T.cursorRow > 0) T.cursorRow--;
+            if (T.soundOn) beep(520, 0.05, 0.04);
+        }
+
+        function writeChar(ch, skipTx = false) {
+            if (!T.power) return;
+            const inLine = T.mode === 'LINE';
+
+            const code = ch.charCodeAt(0);
+            const isControl = code < 32 && ch !== '\r' && ch !== '\n' && ch !== '\b' && ch !== '\t' && ch !== '\x07';
+
+            if (isControl) {
+                if (inLine && !skipTx) { T.txBuffer += ch; scheduleTxFlush(400); }
+                return;
+            }
+
+            if (ch === '\r') {
+                if (inLine && !skipTx) { T.txBuffer += '\r'; scheduleTxFlush(400); }
+                T.cursorCol = 0;
+                updateCursor();
+                return;
+            }
+            if (ch === '\n') {
+                if (inLine && !skipTx) { T.txBuffer += '\n'; flushTx(); }
+                T.cursorRow++;
+                if (T.cursorRow >= ROWS) { if (T.roll) scrollUp(); T.cursorRow = ROWS - 1; }
+                updateCursor();
+                return;
+            }
+            if (ch === '\b') {
+                if (inLine && !skipTx) { T.txBuffer += '\b'; scheduleTxFlush(400); }
+                if (T.cursorCol > 0) T.cursorCol--;
+                const cell = T.buffer[T.cursorRow][T.cursorCol];
+                cell.ch = ' ';
+                cell.color = 'green';
+                cell.reverse = false;
+                cell.blink = false;
+                updateCell(T.cursorRow, T.cursorCol);
+                updateCursor();
+                return;
+            }
+            if (ch === '\x7F') { deleteAtCursor(); return; }
+            if (ch === '\t') {
+                if (inLine && !skipTx) { T.txBuffer += '\t'; scheduleTxFlush(400); }
+                const next = (Math.floor(T.cursorCol / 8) + 1) * 8;
+                while (T.cursorCol < next && T.cursorCol < COLS) writeChar(' ', true);
+                return;
+            }
+            if (ch === '\x07') { if (T.soundOn) beep(880, 0.12, 0.10); return; }
+
+            const cell = T.buffer[T.cursorRow][T.cursorCol];
+            cell.ch = ch;
+            cell.color = T.fgColor;
+            cell.reverse = false;
+            cell.blink = false;
+            updateCell(T.cursorRow, T.cursorCol);
+
+            T.cursorCol++;
+            if (T.cursorCol >= COLS) {
+                if (T.soundOn) beep(880, 0.05, 0.06);
+                if (T.roll) { T.cursorCol = 0; writeChar('\n', skipTx); } else { T.cursorCol = COLS - 1; }
+            }
+            updateCursor();
+            if (inLine && !skipTx) { T.txBuffer += ch; scheduleTxFlush(400); }
+        }
+
+        function moveCursor(dr, dc) {
+            T.cursorRow = Math.max(0, Math.min(ROWS - 1, T.cursorRow + dr));
+            T.cursorCol = Math.max(0, Math.min(COLS - 1, T.cursorCol + dc));
+            updateCursor();
+        }
+
+        function deleteAtCursor() {
+            for (let c = T.cursorCol; c < COLS - 1; c++) {
+                const src = T.buffer[T.cursorRow][c + 1];
+                const dst = T.buffer[T.cursorRow][c];
+                dst.ch = src.ch;
+                dst.color = src.color;
+                dst.reverse = src.reverse;
+                dst.blink = src.blink;
+            }
+            const last = T.buffer[T.cursorRow][COLS - 1];
+            last.ch = ' ';
+            last.color = 'green';
+            last.reverse = false;
+            last.blink = false;
+            for (let c = 0; c < COLS; c++) updateCell(T.cursorRow, c);
+            updateCursor();
+        }
+
+        let audioCtx = null;
+
+        function beep(freq = 800, dur = 0.06, vol = 0.08, type = 'square') {
+            if (!T.soundOn) return;
+            const now = performance.now();
+            if (now - lastBeepTime < 25) return;
+            lastBeepTime = now;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const t0 = audioCtx.currentTime;
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = type; o.frequency.setValueAtTime(freq, t0);
+                g.gain.setValueAtTime(0, t0);
+                g.gain.linearRampToValueAtTime(vol, t0 + 0.004);
+                g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(t0); o.stop(t0 + dur + 0.01);
+            } catch (_) { }
+        }
+
+        function playSwitchSound() {
+            if (!T.soundOn) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const n = audioCtx.currentTime;
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'square';
+                o.frequency.setValueAtTime(2200, n);
+                o.frequency.exponentialRampToValueAtTime(900, n + 0.01);
+                g.gain.setValueAtTime(0.0001, n);
+                g.gain.exponentialRampToValueAtTime(0.10, n + 0.002);
+                g.gain.exponentialRampToValueAtTime(0.0001, n + 0.03);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(n); o.stop(n + 0.04);
+            } catch (_) { }
+        }
+
+        const hostLog = document.getElementById('host-log');
+
+        function logLine(cls, label, text) {
+            const span = document.createElement('span');
+            span.className = cls;
+            span.textContent = (label ? label + ' ' : '') + text + '\n';
+            hostLog.appendChild(span);
+            hostLog.scrollTop = hostLog.scrollHeight;
+        }
+
+        function scheduleTxFlush(delay = 400) {
+            if (txFlushTimer) clearTimeout(txFlushTimer);
+            txFlushTimer = setTimeout(() => {
+                txFlushTimer = null;
+                flushTx();
+            }, delay);
+        }
+
+        function hostSend(text) {
+            if (!T.power) { logLine('err', 'ERR:', 'terminal apagada'); return; }
+            if (!T.hostConnected) { logLine('err', 'ERR:', 'enlace desconectado'); return; }
+
+            logLine('rx', `→ TX [${currentInterface}]:`, JSON.stringify(text));
+
+            if (currentInterface === 'IRPR') {
+                for (const ch of text) writeChar(ch, true);
+            } else {
+                if (txInterval) { clearInterval(txInterval); txInterval = null; }
+                let i = 0;
+                const delay = currentInterface === 'S2' ? 10 : 15;
+
+                txInterval = setInterval(() => {
+                    if (i < text.length) {
+                        writeChar(text[i], true);
+                        i++;
+                    } else {
+                        clearInterval(txInterval);
+                        txInterval = null;
+                    }
+                }, delay);
+            }
+        }
+
+        function flushTx() {
+            if (txFlushTimer) { clearTimeout(txFlushTimer); txFlushTimer = null; }
+            if (!T.txBuffer) return;
+            logLine('tx', '← RX:', JSON.stringify(T.txBuffer));
+            T.txBuffer = '';
+        }
+
+        function toggleHostConnection() {
+            T.hostConnected = !T.hostConnected;
+            const btn = document.getElementById('btn-connect');
+            const txt = document.getElementById('host-state-txt');
+            const input = document.getElementById('host-input');
+            const send = document.getElementById('host-send');
+
+            if (T.hostConnected) {
+                btn.textContent = 'DESCONECTAR';
+                btn.classList.add('connected');
+                txt.textContent = 'CONECTADO';
+                txt.style.color = '#8effa8';
+                input.disabled = false;
+                send.disabled = false;
+                logLine('lbl', '·', `Enlace establecido [${currentInterface}] con la computadora host.`);
+            } else {
+                btn.textContent = 'CONECTAR';
+                btn.classList.remove('connected');
+                txt.textContent = 'DESCONECTADO';
+                txt.style.color = '#ff7a7a';
+                input.disabled = true;
+                send.disabled = true;
+                logLine('lbl', '·', 'Enlace finalizado.');
+            }
+            updateLinkLED();
+            updateStatusBar();
+        }
+
+        function updateLinkLED() {
+            document.getElementById('led-link').classList.toggle('on', T.hostConnected && T.power);
+        }
+
+        function updateStatusBar() {
+            if (!SB_REFS.status) {
+                SB_REFS.status = document.getElementById('st-status');
+                SB_REFS.link = document.getElementById('st-link');
+                SB_REFS.mode = document.getElementById('st-mode');
+                SB_REFS.iface = document.getElementById('st-iface');
+                SB_REFS.cursor = document.getElementById('st-cursor');
+            }
+
+            const s = T.power ? 'ENCENDIDO' : 'APAGADO';
+            const sColor = T.power ? '#8effa8' : '#ff7a7a';
+            if (SB_LAST.status !== s) {
+                SB_REFS.status.textContent = s;
+                SB_REFS.status.style.color = sColor;
+                SB_LAST.status = s;
+            }
+
+            const l = T.hostConnected ? 'CONECTADO' : 'DESCONECTADO';
+            const lColor = T.hostConnected ? '#8effa8' : '#ff7a7a';
+            if (SB_LAST.link !== l) {
+                SB_REFS.link.textContent = l;
+                SB_REFS.link.style.color = lColor;
+                SB_LAST.link = l;
+            }
+
+            if (SB_LAST.mode !== T.mode) {
+                SB_REFS.mode.textContent = T.mode;
+                SB_LAST.mode = T.mode;
+            }
+            if (SB_LAST.iface !== currentInterface) {
+                SB_REFS.iface.textContent = currentInterface;
+                SB_LAST.iface = currentInterface;
+            }
+            const cur = String(T.cursorRow).padStart(2, '0') + ',' + String(T.cursorCol).padStart(2, '0');
+            if (SB_LAST.cursor !== cur) {
+                SB_REFS.cursor.textContent = cur;
+                SB_LAST.cursor = cur;
+            }
+        }
+
+        function bindEvents() {
+            document.getElementById('btn-power').addEventListener('click', (e) => {
+                T.power = !T.power;
+                e.currentTarget.classList.toggle('on', T.power);
+                document.getElementById('screen').classList.toggle('off', !T.power);
+
+                if (T.power) {
+                    initBuffer(); renderAll();
+
+                    const banner =
+                        "                  BIENVENIDO A LA VIDEOTERMINAL CID 702\r\n" +
+                        "                        (MODELO CM 7203)\r\n" +
+                        "======================================================================\r\n" +
+                        "DATOS TECNICOS:\r\n" +
+                        "* Terminal inteligente con logica de edicion y control de flujo.\r\n" +
+                        "* Creador: Instituto Central de Investigacion Digital, Cuba, 1978.\r\n" +
+                        "* Pantalla: 20 lineas x 72 caracteres (1440 caracteres).\r\n" +
+                        "* Codificacion: ASCII / KOI-7N.\r\n" +
+                        "* Memoria: Buffer de 1440 caracteres.\r\n" +
+                        "* Interfaces: Paralela (IRPR) y Serie (S2/IRPS).\r\n" +
+                        "\r\n" +
+                        "RECOMENDACION:\r\n" +
+                        "Use el boton con icono de libro en la barra de estado inferior para\r\n" +
+                        "consultar el manual de usuario completo y conocer todas las funciones.\r\n" +
+                        "Tambien puede mostrar u ocultar la Computadora Host desde alli.\r\n" +
+                        "\r\n" +
+                        "LISTO PARA OPERAR.\r\n" +
+                        "======================================================================\r\n";
+
+                    for (const ch of banner) writeChar(ch, true);
+
+                    logLine('lbl', '·', 'Terminal encendida');
+                    beep(660, 0.08, 0.05);
+                    if (!T.hostConnected) toggleHostConnection();
+                } else {
+                    if (txInterval) { clearInterval(txInterval); txInterval = null; }
+                    if (txFlushTimer) { clearTimeout(txFlushTimer); txFlushTimer = null; }
+                    if (T.txBuffer) flushTx();
+
+                    logLine('lbl', '·', 'Terminal apagada');
+                    beep(440, 0.10, 0.05);
+                    if (T.hostConnected) toggleHostConnection();
+                }
+                updateLinkLED();
+                updateStatusBar();
+            });
+
+            document.getElementById('btn-connect').addEventListener('click', () => {
+                if (!T.power) { logLine('err', 'ERR:', 'Encienda la terminal primero.'); return; }
+                toggleHostConnection();
+            });
+
+            document.getElementById('host-interface-select').addEventListener('change', (e) => {
+                currentInterface = e.target.value;
+                updateStatusBar();
+                logLine('lbl', '·', `Interfaz cambiada a: ${currentInterface}`);
+
+                if (T.hostConnected && !reconnectingInterface) {
+                    reconnectingInterface = true;
+                    toggleHostConnection();
+                    setTimeout(() => {
+                        if (!T.hostConnected) toggleHostConnection();
+                        reconnectingInterface = false;
+                    }, 100);
+                }
+            });
+
+            document.getElementById('host-send').addEventListener('click', () => {
+                let val = document.getElementById('host-input').value;
+                if (val) {
+                    val += '\r\n';
+                    hostSend(val);
+                    document.getElementById('host-input').value = '';
+                }
+            });
+
+            document.getElementById('host-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); document.getElementById('host-send').click(); }
+            });
+
+            document.querySelectorAll('.host-quick button').forEach(b => {
+                b.addEventListener('click', () => {
+                    const cmd = b.dataset.cmd;
+
+                    if (cmd === 'clear') {
+                        clearScreen();
+                        hostLog.innerHTML = '';
+                        logLine('lbl', '·', 'Pantalla y Log limpiados');
+                        return;
+                    }
+
+                    if (!T.power) return;
+
+                    if (cmd === 'home') { T.cursorRow = 0; T.cursorCol = 0; updateCursor(); }
+                    else if (cmd === 'eol') { T.cursorCol = COLS - 1; updateCursor(); }
+                    else if (cmd === 'lf') hostSend('\n');
+                    else if (cmd === 'crlf') hostSend('\r\n');
+                    else if (cmd === 'tab') hostSend('\t');
+                    else if (cmd === 'bell') hostSend('\x07');
+                    else if (cmd === 'demo') hostSend('\r\n> MODO LOCAL: edicion libre\r\n> MODO LINEA: semiduplex\r\n\r\nFIN DE DEMO\r\n');
+                });
+            });
+
+            // FIX: MODO correcto. "on" (palanca arriba) = LOCAL; sin "on" (palanca abajo) = LINEA.
+            document.getElementById('sw-mode').addEventListener('click', (e) => {
+                e.currentTarget.classList.toggle('on');
+                const newMode = e.currentTarget.classList.contains('on') ? 'LOCAL' : 'LINE';
+                if (T.mode === 'LINE' && newMode === 'LOCAL' && T.txBuffer) flushTx();
+                T.mode = newMode;
+                updateStatusBar();
+            });
+
+            document.getElementById('sw-roll').addEventListener('click', (e) => {
+                e.currentTarget.classList.toggle('on');
+                T.roll = e.currentTarget.classList.contains('on');
+            });
+
+            document.getElementById('sw-step').addEventListener('click', (e) => {
+                e.currentTarget.classList.toggle('on');
+                T.cursorStep = e.currentTarget.classList.contains('on');
+            });
+
+            document.getElementById('sw-cent').addEventListener('click', (e) => e.currentTarget.classList.toggle('on'));
+            document.getElementById('sw-sol-red').addEventListener('click', (e) => e.currentTarget.classList.toggle('on'));
+            document.getElementById('sw-sol-green').addEventListener('click', (e) => e.currentTarget.classList.toggle('on'));
+
+            document.querySelectorAll('.sw').forEach(sw => {
+                sw.addEventListener('click', () => {
+                    playSwitchSound();
+                });
+            });
+
+            document.getElementById('btn-toggle-host').addEventListener('click', (e) => {
+                const hp = document.getElementById('host-panel');
+                const btn = e.currentTarget;
+                if (hp.classList.contains('is-hidden')) {
+                    hp.classList.remove('is-hidden');
+                    btn.classList.add('active');
+                } else {
+                    hp.classList.add('is-hidden');
+                    btn.classList.remove('active');
+                }
+            });
+
+            document.getElementById('btn-toggle-help').addEventListener('click', (e) => {
+                const hp = document.getElementById('help-panel');
+                const btn = e.currentTarget;
+                const isOpen = hp.classList.contains('open');
+                if (isOpen) {
+                    hp.classList.remove('open');
+                    btn.classList.remove('active');
+                    setTimeout(() => { if (!hp.classList.contains('open')) hp.style.display = 'none'; }, 400);
+                } else {
+                    hp.style.display = 'flex';
+                    void hp.offsetWidth;
+                    hp.classList.add('open');
+                    btn.classList.add('active');
+                }
+            });
+
+            document.addEventListener('keydown', onPhysKeyDown);
+            document.addEventListener('keyup', onPhysKeyUp);
+        }
+
+        function init() {
+            initBuffer();
+            buildGrid();
+            buildKeyboard();
+            bindEvents();
+            updateModIndicators();
+            updateStatusBar();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
