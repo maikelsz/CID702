@@ -1,48 +1,50 @@
-# CID 702 · CM 7203 — Videoterminal Emulator
+# CID 702 · CM 7203 — Emulador de Videoterminal
 
-A browser-based emulator of the first alphanumeric video terminal mass‑produced in Cuba (1978), internationally designated as the **SM‑7203 / CM 7203** within the COMECON computing system.
+Un emulador en navegador del primer terminal de video alfanumérico producido en serie en Cuba (1978), designado internacionalmente como **SM‑7203 / CM 7203** dentro del sistema informático del COMECON.
 
 <p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_emu.png" /></p>
 
-[![Single File](https://img.shields.io/badge/single--file-HTML%2FCSS%2FJS-brightgreen.svg)](index.html)
-[![No Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen.svg)]()
-[![Language](https://img.shields.io/badge/lang-ES%20%7C%20EN-blue.svg)](#)
+[![Archivo único](https://img.shields.io/badge/archivo%20%C3%BAnico-HTML%2FCSS%2FJS-brightgreen.svg)](index.html)
+[![Sin dependencias](https://img.shields.io/badge/dependencias-ninguna-brightgreen.svg)]()
+[![Idioma](https://img.shields.io/badge/idioma-ES%20%7C%20EN-blue.svg)](#)
+
+Atención!! Esto es un proyecto en desarrollo.
 
 ---
 
-## Table of Contents
-- [About](#about)
-- [Live Demo](#live-demo)
-- [Features](#features)
-- [Quick Start](#quick-start)
-- [Technical Specifications](#technical-specifications)
-- [Architecture](#architecture)
-- [Documentation](#documentation)
-- [Browser Compatibility](#browser-compatibility)
-- [Historical Background](#historical-background)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [Credits](#credits)
-- [License](#license)
+## Índice
+- [Acerca de](#acerca-de)
+- [Demo en vivo](#demo-en-vivo)
+- [Características](#características)
+- [Inicio rápido](#inicio-rápido)
+- [Especificaciones técnicas](#especificaciones-técnicas)
+- [Arquitectura](#arquitectura)
+- [Documentación](#documentación)
+- [Compatibilidad con navegadores](#compatibilidad-con-navegadores)
+- [Antecedentes históricos](#antecedentes-históricos)
+- [Hoja de ruta](#hoja-de-ruta)
+- [Cómo contribuir](#cómo-contribuir)
+- [Créditos](#créditos)
+- [Licencia](#licencia)
 - [Español](#español)
 
 ---
 
-## About
+## Acerca de
 
-The **CID 702** was designed at the **Instituto Central de Investigación Digital (ICID)** in Havana and mass‑produced starting in 1978. Within the COMECON computing family it was catalogued as the **SM‑7203** (and later as the **CM 7203**), becoming the first Cuban technological product exported internationally.
+El **CID 702** fue diseñado en el **Instituto Central de Investigación Digital (ICID)** en La Habana y producido en serie a partir de 1978. Dentro de la familia informática del COMECON fue catalogado como **SM‑7203** (y posteriormente como **CM 7203**), convirtiéndose en el primer producto tecnológico cubano exportado internacionalmente.
 
 <p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_2.jpg" /></p>
 
-This project recreates that terminal in the browser — faithfully reproducing its 72×20 character display, KOI‑7Н Cyrillic keyboard layout, and the three original communication interfaces — so that its behaviour can be studied, preserved, and enjoyed without access to the original hardware.
+Este proyecto recrea ese terminal en el navegador — reproduciendo fielmente su pantalla de 72×20 caracteres, la distribución del teclado cirílico KOI‑7Н y las tres interfaces de comunicación originales — para que su comportamiento pueda estudiarse, preservarse y disfrutarse sin necesidad de acceder al hardware original.
 
 ---
 
-## Historical Background
+## Antecedentes históricos
 
-The CID 702 was developed by the **ICID** in Havana as the first peripheral designed to work with the Cuban **CID 300/10** minicomputer. In 1978 it passed joint international tests in Severodonetsk (USSR) and entered mass production. Within COMECON it was catalogued as the **SM‑7203**, and Cuba became the first socialist country to export microcomputer peripherals.
+El CID 702 fue desarrollado por el **ICID** en La Habana como el primer periférico diseñado para funcionar con la minicomputadora cubana **CID 300/10**. En 1978 superó las pruebas internacionales conjuntas en Severodonetsk (URSS) y entró en producción en serie. Dentro del COMECON fue catalogado como **SM‑7203**, y Cuba se convirtió en el primer país socialista en exportar periféricos de microcomputadora.
 
-The original hardware used an **Intel 8275 CRT controller** and **8279 keyboard controller**, with a 1440‑character buffer and support for KOI‑7Н Cyrillic character generation.
+El hardware original utilizaba un controlador de CRT **Intel 8275** y un controlador de teclado **8279**, con un búfer de 1440 caracteres y soporte para la generación de caracteres cirílicos KOI‑7Н.
 
 ---
 
@@ -54,93 +56,92 @@ O ir a este vínculo: <https://maikelsz.github.io/CID702/CID_702.html>
 
 ---
 
-## Features
+## Características
 
-- **Fully faithful screen**: 72 × 20 character grid (1440 cells) with CRT scanline simulation and phosphor glow.
-- **KOI‑7Н keyboard**: physical Cyrillic sub‑labels with phonetic mapping (`A → А`, `J → Й`, …).
-- **LOCAL / LINE modes**: semiduplex transmission with proper buffering and flush semantics.
-- **Three communication interfaces** simulated with real timing:
-  - `IRPR` — parallel, instantaneous
-  - `S2` — serial V.24 / RS‑232, ~9600 baud
-  - `IRPS` — current loop, ~9600 baud
-- **Integrated host panel** with TX/RX log and quick‑command buttons.
-- **Audio feedback**: distinct sounds for key clicks and switch toggles.
-- **Physical keyboard support** with visual feedback on the virtual keys.
-- **Single self‑contained file** — no build step, no dependencies, works offline.
-- **Bilingual documentation** (Spanish + English).
+- **Pantalla totalmente fiel**: rejilla de 72 × 20 caracteres (1440 celdas) con simulación de líneas de barrido de CRT y resplandor de fósforo.
+- **Teclado KOI‑7Н**: subetiquetas cirílicas físicas con mapeo fonético (`A → А`, `J → Й`, …).
+- **Modos LOCAL / LINE**: transmisión semidúplex con búfer y semántica de vaciado adecuados.
+- **Tres interfaces de comunicación** simuladas con temporización real:
+  - `IRPR` — paralelo, instantáneo
+  - `S2` — serie V.24 / RS‑232, ~9600 baudios
+  - `IRPS` — lazo de corriente, ~9600 baudios
+- **Panel de host integrado** con registro TX/RX y botones de comando rápido.
+- **Respuesta de audio**: sonidos distintos para pulsaciones de teclas y conmutadores.
+- **Soporte de teclado físico** con respuesta visual en las teclas virtuales.
+- **Un único archivo autocontenido** — sin paso de compilación, sin dependencias, funciona sin conexión.
+- **Documentación bilingüe** (español + inglés).
 
 ---
 
-## Technical Specifications
+## Especificaciones técnicas
 
-Emulated hardware features (from the original CM 7203 documentation):
+Características del hardware emulado (según la documentación original del CM 7203):
 
-| Specification | Value |
+| Especificación | Valor |
 |---|---|
-| Screen | 20 rows × 72 characters (1440 cells) |
-| Character generator | 64 ASCII + 160 Latin/Cyrillic + 64 graphics |
-| Attributes | Blink, reverse video, 7 colours |
-| Internal buffer | 1440 characters |
-| Encoding | ASCII / KOI‑7Н |
-| Interfaces | IRPR (parallel), S2 (serial V.24), IRPS (current loop) |
-| Original power | 110/220 V, 60/50 Hz, 200 W |
-| Original weight | 22 kg (without keyboard) / 25 kg (with keyboard) |
+| Pantalla | 20 filas × 72 caracteres (1440 celdas) |
+| Generador de caracteres | 64 ASCII + 160 latinos/cirílicos + 64 gráficos |
+| Atributos | Parpadeo, video inverso, 7 colores |
+| Búfer interno | 1440 caracteres |
+| Codificación | ASCII / KOI‑7Н |
+| Interfaces | IRPR (paralelo), S2 (serie V.24), IRPS (lazo de corriente) |
+| Alimentación original | 110/220 V, 60/50 Hz, 200 W |
+| Peso original | 22 kg (sin teclado) / 25 kg (con teclado) |
 
 ---
 
-## Architecture
+## Arquitectura
 
-The emulator is a **single HTML file** containing all the code:
+El emulador es un **único archivo HTML** que contiene todo el código:
 
 ```
 index.html
-├── <style>        CSS — CRT simulation, keyboard layout, panels
-└── <script>       Vanilla JavaScript (no framework)
-    ├── T          Global terminal state
-    ├── KEY_MAP    Physical → virtual key mapping
-    ├── writeChar  Character rendering with LINE‑mode buffering
-    ├── render*    DOM rendering (cached cells, O(1) updates)
-    └── hostSend   Simulated host → terminal transmission
+├── <style>        CSS — simulación de CRT, distribución del teclado, paneles
+└── <script>       JavaScript vanilla (sin framework)
+    ├── T          Estado global del terminal
+    ├── KEY_MAP    Mapeo de teclas físicas → virtuales
+    ├── writeChar  Renderizado de caracteres con búfer en modo LINE
+    ├── render*    Renderizado DOM (celdas en caché, actualizaciones O(1))
+    └── hostSend   Transmisión host → terminal simulada
 ```
 
-Key design decisions:
-- **Cell cache** (`CELL_CACHE`) — O(1) DOM access, no `querySelector` on the hot path.
-- **Dirty‑check caching** for the status bar — avoids redundant writes.
-- **Debounced transmission** (`scheduleTxFlush`) — batches keystrokes, avoiding log spam.
-- **One‑shot modifiers** for physical Shift/Ctrl; **persistent toggles** only from mouse clicks.
+Decisiones clave de diseño:
+- **Caché de celdas** (`CELL_CACHE`) — acceso al DOM en O(1), sin `querySelector` en la ruta crítica.
+- **Caché con verificación de cambios** para la barra de estado — evita escrituras redundantes.
+- **Transmisión con debounce** (`scheduleTxFlush`) — agrupa pulsaciones, evitando saturar el registro.
+- **Modificadores de un solo uso** para Shift/Ctrl físicos; **conmutadores persistentes** solo desde clics de ratón.
 
 ---
 
-## Browser Compatibility
+## Compatibilidad con navegadores
 
-Tested on:
+Probado en:
 
-| Browser | Status |
+| Navegador | Estado |
 |---|---|
-| Chrome / Edge (Chromium ≥ 90) | ✅ Full support |
-| Firefox ≥ 88 | ✅ Full support |
-| Safari ≥ 14 | ✅ Full support |
-| Mobile (Chrome/Safari) | ⚠️ Works, but designed for desktop |
+| Chrome / Edge (Chromium ≥ 90) | ✅ Soporte completo |
+| Firefox ≥ 88 | ✅ Soporte completo |
+| Safari ≥ 14 | ✅ Soporte completo |
+| Móvil (Chrome/Safari) | ⚠️ Funciona, pero diseñado para escritorio |
 
-Requires `AudioContext` and modern ES2017+ syntax.
-
----
-
-## Roadmap
-
-- [ ] Cell‑level colour attributes (7 colours) with palette selector
-- [ ] Blink and reverse‑video per‑cell rendering
-- [ ] Realistic handshake (RTS/CTS/XON/XOFF) between host and terminal
-- [ ] Responsive scaling for small viewports
-- [ ] Integration with the [CID 201‑B emulator](https://github.com/[TU-USUARIO]/cid-201b-emulator) as a full system
-
+Requiere `AudioContext` y sintaxis ES2017+ moderna.
 
 ---
 
-## Credits
+## Hoja de ruta
 
-- **Historical research**:  
-  - Instituto Central de Investigación Digital (ICID) archives  
-- **Related projects**:
-  - [CID 201‑B emulator](https://github.com/maikelsz/CIDmulatorCID201B/) — the first minicomputer to drove the CID 702
+- [ ] Atributos de color a nivel de celda (7 colores) con selector de paleta
+- [ ] Renderizado de parpadeo y video inverso por celda
+- [ ] Handshake realista (RTS/CTS/XON/XOFF) entre host y terminal
+- [ ] Escalado responsivo para ventanas pequeñas
+- [ ] Integración con el [emulador del CID 201‑B](https://github.com/[TU-USUARIO]/cid-201b-emulator) como sistema completo
 
+---
+
+## Créditos
+
+- **Investigación histórica**:
+  - Archivos del Instituto Central de Investigación Digital (ICID)
+- **Proyectos relacionados**:
+  - [Emulador del CID 201‑B](https://github.com/maikelsz/CIDmulatorCID201B/) — la primera minicomputadora que controló el CID 702
+```
