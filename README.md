@@ -134,7 +134,7 @@ Requiere `AudioContext` y sintaxis ES2017+ moderna.
 - [ ] Renderizado de parpadeo y video inverso por celda
 - [ ] Handshake realista (RTS/CTS/XON/XOFF) entre host y terminal
 - [ ] Escalado responsivo para ventanas pequeñas
-- [ ] Integración con el [emulador del CID 201‑B](https://github.com/[TU-USUARIO]/cid-201b-emulator) como sistema completo
+- [ ] Integración con el [emulador del CID 201‑B](https://github.com/maikelsz/CIDmulatorCID201B/) como sistema completo
 
 ---
 
