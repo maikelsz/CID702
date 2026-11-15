@@ -32,7 +32,7 @@ Atención!! Esto es un proyecto en desarrollo.
 
 ## Acerca de
 
-El **CID 702** fue diseñado en el **Instituto Central de Investigación Digital (ICID)** en La Habana y producido en serie a partir de 1978. Dentro de la familia informática del COMECON fue catalogado como **SM‑7203** (y posteriormente como **CM 7203**), convirtiéndose en el primer producto tecnológico cubano exportado internacionalmente.
+El **CID 702** fue diseñado en el **Instituto Central de Investigación Digital (ICID)** en Cuba, y producido en serie a partir de 1978. Dentro de la familia informática del COMECON fue catalogado como **SM‑7203**, convirtiéndose en el primer producto tecnológico cubano exportado internacionalmente.
 
 <p align="center"><img width="1280" src="https://github.com/maikelsz/CID702/blob/main/pictures/CID702_2.jpg" /></p>
 
@@ -42,7 +42,7 @@ Este proyecto recrea ese terminal en el navegador — reproduciendo fielmente su
 
 ## Antecedentes históricos
 
-El CID 702 fue desarrollado por el **ICID** en La Habana como el primer periférico diseñado para funcionar con la minicomputadora cubana **CID 300/10**. En 1978 superó las pruebas internacionales conjuntas en Severodonetsk (URSS) y entró en producción en serie. Dentro del COMECON fue catalogado como **SM‑7203**, y Cuba se convirtió en el primer país socialista en exportar periféricos de microcomputadora.
+El CID 702 fue desarrollado por el **ICID** en La Habana como el primer periférico diseñado para funcionar con la minicomputadora cubana **CID 300/10**. En 1978 superó las pruebas internacionales conjuntas en Severodonetsk (URSS) y entró en producción en serie. Dentro del COMECON fue catalogado como **SM‑7203**
 
 El hardware original utilizaba un controlador de CRT **Intel 8275** y un controlador de teclado **8279**, con un búfer de 1440 caracteres y soporte para la generación de caracteres cirílicos KOI‑7Н.
 
